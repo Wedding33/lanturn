@@ -224,7 +224,7 @@ def get_mev_dex(fork_url, token_addr, remaining_balance, w3, involved_dexes):
 def get_transaction(tx_hash):
     data = {}
     data['jsonrpc'] = '2.0'
-    data['method'] = 'eth_getRawTransactionByHash'
+    data['method'] = 'eth_getTransactionByHash'
     data['params'] = [tx_hash]
     data['id'] = 1
     r = requests.post(ARCHIVE_NODE_URL, json=data)

@@ -204,8 +204,8 @@ class AdaNS_sampler(object):
         self.update_good_samples(alpha_max)
 
 
-    def run_sampling(self, evaluator, num_samples, n_iter, minimize=False, alpha_max=1.0, early_stopping=np.Infinity,
-        save_path='./sampling', n_parallel=1, executor=mp.Pool, param_names=None, verbose=False):
+    def run_sampling(self, evaluator, num_samples, n_iter, minimize=False, alpha_max=1.0, early_stopping=np.inf,
+        save_path='./sampling', n_parallel=1, executor=mp.Pool, param_names=None, verbose=True):
         '''
         Function to maximize given black-box function and save results to ./sampling/
             - evaluator : the objective function to be minimized
@@ -261,7 +261,7 @@ class AdaNS_sampler(object):
                 print('=> Activating early stopping')
                 break
 
-            if origins is not None:
+            if origins is not None:  #过滤掉那些来源标记为 'P' 的样本。这可能意味着这些样本是从父样本中生成的,而不是完全随机生成的。
                 indices_to_keep = np.nonzero(np.asarray(origins) != 'P')
                 samples = samples[indices_to_keep]
 
@@ -271,7 +271,7 @@ class AdaNS_sampler(object):
             n_batches = len(samples)//n_parallel if len(samples)%n_parallel==0 else (len(samples)//n_parallel)+1
             t1 = time.time()
             # with tqdm(total=n_batches) as pbar:
-            for i in range(n_batches):
+            for i in tqdm(range(n_batches)):
                 if n_parallel > 1:
                     batch_samples = samples[i*n_parallel:(i+1)*n_parallel]
                     with executor() as e:
@@ -561,7 +561,7 @@ class Gaussian_sampler(AdaNS_sampler):
                     distance_mat[i][j] = np.sum((samples[i]-samples[j])**2)
                     distance_mat[j][i] = np.sum((samples[i]-samples[j])**2)
             for i in range(len(scores)):
-                distance_mat[i,i] = np.Infinity
+                distance_mat[i,i] = np.inf
             pair_each_point = np.zeros(len(scores)).astype(np.int32)
             id0 = 0
             while(len(pairs)<num_pairs):
@@ -675,7 +675,8 @@ class RandomOrder_sampler(AdaNS_sampler):
         # print('neighbors:', neighbors)
         return neighbors
     
-    
+    # 这个函数的主要作用是从搜索空间中均匀采样一定数量的样本向量,
+    # 并将其返回。它使用了一个内部函数 perm_generator 来生成序列的排列,并确保每个样本向量都是唯一的。
     def sample_uniform(self, num_samples=1):
         '''
         function to sample unifromly from all the search-space

@@ -18,7 +18,8 @@ module.exports = {
       }
     },
     forking: {
-      url: "http://localhost:8545"
+      // url: "http://localhost:8545"
+      url: "https://eth.merkle.io"
     },
     loggingEnabled: false
   }

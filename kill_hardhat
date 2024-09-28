@@ -1,0 +1,3 @@
+netstat -apn  |  grep 8545
+ps -ef | grep 11893
+kill -9 11893
