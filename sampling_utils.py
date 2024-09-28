@@ -204,7 +204,7 @@ class AdaNS_sampler(object):
         self.update_good_samples(alpha_max)
 
 
-    def run_sampling(self, evaluator, num_samples, n_iter, minimize=False, alpha_max=1.0, early_stopping=np.inf,
+    def run_sampling(self, evaluator, num_samples, n_iter, minimize=False, alpha_max=1.0, early_stopping=np.Infinity,
         save_path='./sampling', n_parallel=1, executor=mp.Pool, param_names=None, verbose=True):
         '''
         Function to maximize given black-box function and save results to ./sampling/
@@ -561,7 +561,7 @@ class Gaussian_sampler(AdaNS_sampler):
                     distance_mat[i][j] = np.sum((samples[i]-samples[j])**2)
                     distance_mat[j][i] = np.sum((samples[i]-samples[j])**2)
             for i in range(len(scores)):
-                distance_mat[i,i] = np.inf
+                distance_mat[i,i] = np.Infinity
             pair_each_point = np.zeros(len(scores)).astype(np.int32)
             id0 = 0
             while(len(pairs)<num_pairs):
